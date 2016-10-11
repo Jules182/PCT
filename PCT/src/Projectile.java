@@ -1,56 +1,79 @@
-package _2016._09.assessments.assignment01.template;
+
 /**
  * This application allows the user to calculate range, max height and flight time for a projectile 
  * following the entering of mass (currently not used), angle of launch, and initial speed.
  * There is error checking to ensure that suitable values are entered. 
  */
 
-
-
-// imports - many are missing
-
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Toggle;
 import java.text.DecimalFormat;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 // class definition
 public class Projectile extends Application {
 
-	// init method
 	public void init() {
+		// init method		
+		// Projectile Type - ComboBox	
+		projectile_type_combobox.getItems().addAll("Adult Human", "Piano");
+		initial_speed_slow.setToggleGroup(initial_speed_toggleGroup);
+		initial_speed_medium.setToggleGroup(initial_speed_toggleGroup);
+		initial_speed_fast.setToggleGroup(initial_speed_toggleGroup);
 
-		// Projectile Type - ComboBox
-
-
+		
+//		
+//		GridPane gp2 = new GridPane();
+//		initial_speed_slow, initial_speed_medium, initial_speed_fast
+		
+		
+		gp.addRow(0, projectile_type_label, projectile_type_combobox);
+		gp.addRow(1, mass_label, mass_textField);
+		gp.addRow(2, angle_label, angle_textField, angle_slider);
+		gp.addRow(3, initial_speed_label, intitial_speed_textField, initial_speed_slow, initial_speed_medium, initial_speed_fast);
+		gp.addRow(4, range_label, range_textField);
+		gp.addRow(5, height_label, height_textField);
+		gp.addRow(6, time_label, time_textField);
+		
 		// Inital Speed ToggleGroup
-		//use the .setUserData command of the radio button to store speeds
+		// use the .setUserData command of the radio button to store speeds
 		initial_speed_slow.setUserData("10");
 
-		// Prevent the following TextFields from being editable: angle,intial speed range, height, time 
+		// Prevent the following TextFields from being editable: angle,intial
+		// speed range, height, time
 
-		// Layout controls as per the diagram, feel free to improve the UI. 
-		// How many rows and columns do you want - work this out on paper first 
-		// My version has 7 rows, you can look at the JavaFX API to see how to get controls to span more than one column
+		// Layout controls as per the diagram, feel free to improve the UI.
+		// How many rows and columns do you want - work this out on paper first
+		// My version has 7 rows, you can look at the JavaFX API to see how to
+		// get controls to span more than one column
 
-		// Method call (not declaration!)  to initialize the controls based on the projectile type.
+		// Method call (not declaration!) to initialize the controls based on
+		// the projectile type.
 
-		//  Listener for angle Slider to set angle TextTield and the angle variable 
-		angle_slider.valueProperty().addListener(new ChangeListener<Number>(){
-			public void changed(final ObservableValue<? extends Number> observable, final Number oldValue, final Number newValue){
-
-			}
+		// Listener for angle Slider to set angle TextTield and the angle
+		// variable
+		angle_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			
 		});
 
 		// Listener for inital_speed ToggleGroup to set initital_speed TextField
-		this.initial_speed_toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-			public void changed(ObservableValue<? extends Toggle> ov, Toggle toggle,Toggle new_toggle) {
-
-			}
+		this.initial_speed_toggleGroup.selectedToggleProperty().addListener((ov, toggle, new_toggle) -> {
+			
 		});
 
 		// Listener to call the fire() method when the fire button is pressed
 
-		// Listener to initialize control values if the projectile type is changed
+		// Listener to initialize control values if the projectile type is
+		// changed
 
 		// Listener to initialize control values if the erase button is pressed
 
@@ -59,6 +82,9 @@ public class Projectile extends Application {
 	// Overridden start method
 	public void start(Stage primaryStage) {
 		// set a title on the window, set a scene, size, and show the window
+		primaryStage.setTitle("PCT - Projectile Calculation Tool");
+		primaryStage.setScene(new Scene(gp, 600, 600));
+		primaryStage.show();
 	}
 
 	// Overridden stop method add functionality to this if you wish.
@@ -68,16 +94,19 @@ public class Projectile extends Application {
 
 	// Entry point to our program
 	public static void main(String[] args) {
-
+		launch(args);
 	}
 
-	// Method to harvest values from controls, perform calculation and display the results
-	private void fire(){
-		//capture the values from the text fields outputting number errors where relevant 
+	// Method to harvest values from controls, perform calculation and display
+	// the results
+	private void fire() {
+		// capture the values from the text fields outputting number errors
+		// where relevant
 
-		// don't forget to convert your angle input to radians for use with Math.sin()
+		// don't forget to convert your angle input to radians for use with
+		// Math.sin()
 
-		// calculate the range of the projectile	
+		// calculate the range of the projectile
 
 		// calculate the flight time of the projectile
 
@@ -86,84 +115,91 @@ public class Projectile extends Application {
 		// display the results in the relevant TextFields
 	}
 
-	// Method to initalize the controls based on the selection of the projectile type 
-	private void initalizeControlValues(){
-		//if the projectile type is Adult Human then 
-	
-			//inital the mass to 80kg
-	
-			//Set slider scale 0 to 90, set slider value to 45 and ticks to 10 units
-	
-			// initalize the intital speed to fast
-		}
-		// else 
-		
-			//inital the mass to 400kg
-		
-			//Set slider scale 0 to 40, set slider value to 20 and ticks to 10 units
-		
-			// initalize the intial speed to slow
-			this.initial_speed_slow.setSelected(true);
-			this.intitial_speed_textField.setText((String) this.initial_speed_slow.getUserData());
-		}
-		// display ticks etc
-		
-
-		// clear the results fields and variables
+	// Method to initalize the controls based on the selection of the projectile
+	// type
+	private void initalizeControlValues() {
+		// //if the projectile type is Adult Human then
+		//
+		// //inital the mass to 80kg
+		//
+		// //Set slider scale 0 to 90, set slider value to 45 and ticks to 10
+		// units
+		//
+		// // initalize the intital speed to fast
+		// }
+		// // else
+		//
+		// //inital the mass to 400kg
+		//
+		// //Set slider scale 0 to 40, set slider value to 20 and ticks to 10
+		// units
+		//
+		// // initalize the intial speed to slow
+		// this.initial_speed_slow.setSelected(true);
+		// this.intitial_speed_textField.setText((String)
+		// this.initial_speed_slow.getUserData());
+		// }
+		// // display ticks etc
+		//
+		//
+		// // clear the results fields and variables
 	}
 
-	//The following variables SHOULD be initialized where appropriate as declaring and 
-	// initializing separately is very verbose. 
+	// The following variables SHOULD be initialized where appropriate as
+	// declaring and
+	// initializing separately is very verbose.
 
-	//Layout
-	private GridPane gp;
+	// Layout
+	private GridPane gp = new GridPane();
 
-	//Projectile Type
-	private Label projectile_type_label;
-	private ComboBox<String> projectile_type_combobox;
+	// Projectile Type
+	private Label projectile_type_label = new Label("Projectile Type");
+	private ComboBox<String> projectile_type_combobox = new ComboBox<String>();
 
 	// Mass
-	private Label mass_label;
-	private TextField mass_textField ;
-	private double mass;
+	private Label mass_label = new Label("Mass [kgs]");
+	private TextField mass_textField = new TextField();
+	private double mass = 0.0;
 
-	//Angle
-	private Label angle_label ;
-	private Slider angle_slider;
-	private TextField angle_textField ;
-	private double angle;
-	//Formating the values in the duration box
-	DecimalFormat df ;
+	// Angle
+	private Label angle_label = new Label("Angle [°]");
+	private Slider angle_slider = new Slider(0, 90, 45);
+	private TextField angle_textField = new TextField();
+	private double angle = 45.0;
+	// Formating the values in the duration box
+	DecimalFormat df = new DecimalFormat();
 
-	//Initial Speed 
-	private Label initial_speed_label ;
-	private ToggleGroup initial_speed_toggleGroup ;
-	private RadioButton initial_speed_slow;
-	private RadioButton initial_speed_medium;
-	private RadioButton initial_speed_fast;
-	private TextField intitial_speed_textField;
-	private double initial_speed;
+	// Initial Speed
+	private Label initial_speed_label = new Label("Initial Speed [m/s]");
+	private ToggleGroup initial_speed_toggleGroup = new ToggleGroup();
+	private RadioButton initial_speed_slow = new RadioButton("slow");
+	private RadioButton initial_speed_medium = new RadioButton("medium");
+	private RadioButton initial_speed_fast = new RadioButton("fast");
+	private TextField intitial_speed_textField = new TextField("100");
+	private double initial_speed = 100;
 
-	//Range
-	private Label range_label;
-	private TextField range_textField;
-	private double range;
+	// Range
+	private Label range_label = new Label("Range [m]");
+	private TextField range_textField = new TextField();
+	private double range = 0;
 
-	//Height
-	private Label height_label;
-	private TextField height_textField;
-	private double height;
+	// Height
+	private Label height_label = new Label("Max Height [m]");
+	private TextField height_textField = new TextField();
+	private double height = 0;
 
-	//Time
-	private Label time_label;
-	private TextField time_textField ;
-	private double time; 
+	// Time
+	private Label time_label = new Label("Time [s]");
+	private TextField time_textField = new TextField();
+	private double time = 0;
 
-	//Gravity 
-	private static final double gravitational_accelleration=9.81; // m/s/s
+	// Gravity
+	private static final double gravitational_accelleration = 9.81; // m/s/s
 
-	//Calculate
-	private Button fire_button;
-	private Button erase_button;
+	// Calculate
+	private Button fire_button = new Button("Fire!");
+	private Button erase_button = new Button("Reset");
 }
 
+// don't break away form the template
+// change slider according to value
