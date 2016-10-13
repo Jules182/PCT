@@ -23,33 +23,51 @@ import javafx.stage.Stage;
 public class Projectile extends Application {
 
 	public void init() {
-		// init method		
-		// Projectile Type - ComboBox	
+		// init method, setting default values
+		// Projectile Type - ComboBox
 		projectile_type_combobox.getItems().addAll("Adult Human", "Piano");
+		projectile_type_combobox.getSelectionModel().select(0); // default
+																// select
+
+		// initial speed - ToggleGroup
 		initial_speed_slow.setToggleGroup(initial_speed_toggleGroup);
 		initial_speed_medium.setToggleGroup(initial_speed_toggleGroup);
 		initial_speed_fast.setToggleGroup(initial_speed_toggleGroup);
+		initial_speed_fast.setSelected(true);
 
-		
-//		
-//		GridPane gp2 = new GridPane();
-//		initial_speed_slow, initial_speed_medium, initial_speed_fast
-		
-		
+		// Customisation of slider
+		angle_slider.setShowTickMarks(true);
+		angle_slider.setShowTickLabels(true);
+		angle_slider.setSnapToTicks(true);
+		angle_slider.setMajorTickUnit(15);
+		angle_slider.setBlockIncrement(7.5);
+
 		gp.addRow(0, projectile_type_label, projectile_type_combobox);
 		gp.addRow(1, mass_label, mass_textField);
 		gp.addRow(2, angle_label, angle_textField, angle_slider);
-		gp.addRow(3, initial_speed_label, intitial_speed_textField, initial_speed_slow, initial_speed_medium, initial_speed_fast);
+		GridPane.setConstraints(angle_slider, 2, 2, 3, 1);
+		
+		gp.addRow(3, initial_speed_label, intitial_speed_textField, initial_speed_slow, initial_speed_medium,
+				initial_speed_fast);
 		gp.addRow(4, range_label, range_textField);
 		gp.addRow(5, height_label, height_textField);
 		gp.addRow(6, time_label, time_textField);
-		
-		// Inital Speed ToggleGroup
+		gp.addRow(7, fire_button, erase_button);
+	//	fire_button.getStyleClass().add("fire");
+
+		// Initial Speed ToggleGroup
 		// use the .setUserData command of the radio button to store speeds
 		initial_speed_slow.setUserData("10");
+		initial_speed_medium.setUserData("55");
+		initial_speed_fast.setUserData("100");
 
-		// Prevent the following TextFields from being editable: angle,intial
-		// speed range, height, time
+		// Prevent the following TextFields from being editable: angle,initial
+		// speed, range, height, time
+		angle_textField.setEditable(false);
+		intitial_speed_textField.setEditable(false);
+		range_textField.setEditable(false);
+		height_textField.setEditable(false);
+		time_textField.setEditable(false);
 
 		// Layout controls as per the diagram, feel free to improve the UI.
 		// How many rows and columns do you want - work this out on paper first
@@ -62,28 +80,47 @@ public class Projectile extends Application {
 		// Listener for angle Slider to set angle TextTield and the angle
 		// variable
 		angle_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-			
+			angle = (double) newValue;
+			angle_textField.setText(newValue.toString());
+		});
+
+		// prevent user from text input into mass field
+		mass_textField.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (!newValue.matches("\\d*")) {
+				mass_textField.setText(newValue.replaceAll("[^\\d]", ""));
+			}
 		});
 
 		// Listener for inital_speed ToggleGroup to set initital_speed TextField
-		this.initial_speed_toggleGroup.selectedToggleProperty().addListener((ov, toggle, new_toggle) -> {
-			
+		initial_speed_toggleGroup.selectedToggleProperty().addListener((ov, toggle, new_toggle) -> {
+			initial_speed = Double.parseDouble((String) new_toggle.getUserData());
+			intitial_speed_textField.setText(df.format(initial_speed));
 		});
 
 		// Listener to call the fire() method when the fire button is pressed
+		fire_button.setOnAction((event) -> {
+			fire();
+		});
 
 		// Listener to initialize control values if the projectile type is
 		// changed
+		projectile_type_combobox.setOnAction((event) -> {
+			initalizeControlValues();
+		});
 
 		// Listener to initialize control values if the erase button is pressed
-
+		erase_button.setOnAction((event) -> {
+			initalizeControlValues();
+		});
 	}
 
 	// Overridden start method
 	public void start(Stage primaryStage) {
 		// set a title on the window, set a scene, size, and show the window
 		primaryStage.setTitle("PCT - Projectile Calculation Tool");
-		primaryStage.setScene(new Scene(gp, 600, 600));
+		Scene sc = new Scene(gp, 500, 300);
+		sc.getStylesheets().add("style.css");
+		primaryStage.setScene(sc);
 		primaryStage.show();
 	}
 
@@ -159,15 +196,16 @@ public class Projectile extends Application {
 	// Mass
 	private Label mass_label = new Label("Mass [kgs]");
 	private TextField mass_textField = new TextField();
-	private double mass = 0.0;
+	private double mass = 0;
 
 	// Angle
 	private Label angle_label = new Label("Angle [°]");
 	private Slider angle_slider = new Slider(0, 90, 45);
+
 	private TextField angle_textField = new TextField();
-	private double angle = 45.0;
+	private double angle = 0;
 	// Formating the values in the duration box
-	DecimalFormat df = new DecimalFormat();
+	DecimalFormat df = new DecimalFormat("0.00");
 
 	// Initial Speed
 	private Label initial_speed_label = new Label("Initial Speed [m/s]");
@@ -203,3 +241,5 @@ public class Projectile extends Application {
 
 // don't break away form the template
 // change slider according to value
+
+// inTitial_speed_textField!! can we change this?
