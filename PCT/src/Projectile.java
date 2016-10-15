@@ -18,6 +18,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 // class definition
@@ -26,59 +27,75 @@ public class Projectile extends Application {
 	public void init() {
 		// init method, setting default values
 
+		// Planet
+		planet_combobox.getItems().addAll("Earth", "Moon", "Mars");
+		planet_combobox.getSelectionModel().select(0); // default select
+
 		// Projectile Type - ComboBox
 		projectile_type_combobox.getItems().addAll("Adult Human", "Piano");
 		projectile_type_combobox.getSelectionModel().select(0); // default select
 
-		// initial speed - ToggleGroup
+		// Initial Speed ToggleGroup
 		initial_speed_slow.setToggleGroup(initial_speed_toggleGroup);
 		initial_speed_medium.setToggleGroup(initial_speed_toggleGroup);
 		initial_speed_fast.setToggleGroup(initial_speed_toggleGroup);
 		initial_speed_fast.setSelected(true);
-
-		// set up GridPane Layout
-		gp.addRow(0, projectile_type_label, projectile_type_combobox);
-		gp.addRow(1, mass_label, mass_textField, mass_exception_label);
-		mass_exception_label.setId("massl");
-		GridPane.setConstraints(mass_exception_label, 2, 1, 4, 1);
-		gp.addRow(2, angle_label, angle_textField, angle_slider);
-		// set slider to span the 3 columns of RadioButtons below
-		GridPane.setConstraints(angle_slider, 2, 2, 3, 1);
-		gp.setHgap(5); // horizontal gap in pixels
-		gp.setVgap(5); // vertical gap in pixels
-		gp.setPadding(new Insets(5, 5, 5, 5)); // margins around the whole GridPane
-		gp.addRow(3, initial_speed_label, intitial_speed_textField, initial_speed_slow, initial_speed_medium,
-				initial_speed_fast);
-		gp.addRow(4, range_label, range_textField);
-		gp.addRow(5, height_label, height_textField);
-		gp.addRow(6, time_label, time_textField);
-		gp.addRow(7, fire_button, erase_button);
-		fire_button.setId("fire");
-
-		// Initial Speed ToggleGroup
 		// use the .setUserData command of the radio button to store speeds
 		initial_speed_slow.setUserData("10");
 		initial_speed_medium.setUserData("55");
 		initial_speed_fast.setUserData("100");
+		// put Radio Buttons in HBox
+		HBox hb = new HBox();
+		hb.setSpacing(5);
+		hb.getChildren().addAll(initial_speed_slow, initial_speed_medium, initial_speed_fast);
+		
+		// set up GridPane Layout
+		gp.setHgap(5); // horizontal gap in pixels
+		gp.setVgap(5); // vertical gap in pixels
+		gp.setPadding(new Insets(5, 5, 5, 5)); // margins around the whole GridPane
+		
+		// add Rows
+		gp.addRow(0, planet_label, planet_combobox);
+		gp.addRow(1, projectile_type_label, projectile_type_combobox);
+		gp.addRow(2, mass_label, mass_textField, mass_exception_label);
+		gp.addRow(3, angle_label, angle_slider, angle_textField);
+		gp.addRow(4, initial_speed_label, hb, intitial_speed_textField);
+		gp.addRow(5, results_label, fire_button);
+		gp.addRow(6, range_label, range_textField);
+		gp.addRow(7, height_label, height_textField);
+		gp.addRow(8, time_label, time_textField, erase_button);
+
+		// set the fire button to expand to fill the available space
+		fire_button.setMaxWidth(Integer.MAX_VALUE);
+		// set label to span more than 1 column
+		GridPane.setConstraints(mass_exception_label, 2, 2, 2, 1);
+		//set width of third column controls
+		angle_textField.setMaxWidth(50);
+		intitial_speed_textField.setMaxWidth(50);
+		erase_button.setMinWidth(50);
+		// set CSS selectors
+		mass_exception_label.setId("mass_exception_label");
+		results_label.setId("results_label");
+		fire_button.setId("fire_button");
 
 		// Prevent the following TextFields from being editable: angle,initial speed, range, height, time
 		angle_textField.setEditable(false);
+		angle_textField.getStyleClass().add("disabledField");
 		intitial_speed_textField.setEditable(false);
+		intitial_speed_textField.getStyleClass().add("disabledField");
 		range_textField.setEditable(false);
+		range_textField.getStyleClass().add("disabledField");
 		height_textField.setEditable(false);
+		height_textField.getStyleClass().add("disabledField");
 		time_textField.setEditable(false);
-
-		// Layout controls as per the diagram, feel free to improve the UI.
-		// How many rows and columns do you want - work this out on paper first
-		// My version has 7 rows, you can look at the JavaFX API to see how to
-		// get controls to span more than one column
+		time_textField.getStyleClass().add("disabledField");
 
 		// Method call to initialise the controls based on the projectile type
 		initalizeControlValues();
 
 		// Listener for angle Slider to set angle TextTield and the angle variable
 		angle_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-			angle_textField.setText(df.format(newValue));
+			angle_textField.setText(Double.toString((double) newValue));
 			fire(); // update calculation with new angle
 		});
 
@@ -89,13 +106,17 @@ public class Projectile extends Application {
 		// Listener for inital_speed ToggleGroup to set initital_speed TextField
 		initial_speed_toggleGroup.selectedToggleProperty().addListener((ov, toggle, new_toggle) -> {
 			intitial_speed_textField.setText((String) new_toggle.getUserData());
-			// initial_speed = Double.parseDouble(intitial_speed_textField.getText());
 			fire(); // update calculation with new initial speed
 		});
 
 		// Listener to call the fire() method when the fire button is pressed
 		fire_button.setOnAction((event) -> {
 			fire();
+		});
+
+		// Listener to initialise control values if the planet type is changed
+		planet_combobox.setOnAction((event) -> {
+			initalizeControlValues();
 		});
 
 		// Listener to initialise control values if the projectile type is changed
@@ -113,7 +134,7 @@ public class Projectile extends Application {
 	public void start(Stage primaryStage) {
 		// set a title on the window, set a scene, size, and show the window
 		primaryStage.setTitle("PCT - Projectile Calculation Tool");
-		Scene sc = new Scene(gp, 500, 300);
+		Scene sc = new Scene(gp, 350, 300);
 		sc.getStylesheets().add("style.css");
 		primaryStage.setScene(sc);
 		primaryStage.show();
@@ -131,12 +152,30 @@ public class Projectile extends Application {
 
 	// Method to harvest values from controls, perform calculation and display the results
 	private void fire() {
+		// get value from mass field and display error if it's not a number
 		try {
 			mass = Double.parseDouble(mass_textField.getText());
 			mass_exception_label.setText("");
-
 		} catch (NumberFormatException e) {
-			mass_exception_label.setText("Only numerical input allowed!");
+			mass_exception_label.setText("No Number");
+		}
+
+		// set gravitational acceleration depending on planet
+		double gravitation;
+
+		switch (planet_combobox.getValue()) {
+		case "Earth":
+			gravitation = gravitational_accelleration;
+			break;
+		case "Moon":
+			gravitation = gravitational_accelleration_moon;
+			break;
+		case "Mars":
+			gravitation = gravitational_accelleration_mars;
+			break;
+		default:
+			gravitation = gravitational_accelleration;
+			break;
 		}
 
 		initial_speed = Double.parseDouble(intitial_speed_textField.getText());
@@ -144,21 +183,13 @@ public class Projectile extends Application {
 		double angle_rad = Math.toRadians(angle);
 
 		// calculate the range of the projectile
-		range = initial_speed * initial_speed  * Math.sin(2 * angle_rad) 
-				/ gravitational_accelleration;
+		range = initial_speed * initial_speed * Math.sin(2 * angle_rad) / gravitation;
 
 		// calculate the max height of the projectile
-		height = initial_speed * initial_speed * Math.sin(angle_rad) * Math.sin(angle_rad)
-				/ (2 * gravitational_accelleration);
+		height = initial_speed * initial_speed * Math.sin(angle_rad) * Math.sin(angle_rad) / (2 * gravitation);
 
 		// calculate the flight time of the projectile
-		time = 2 * initial_speed * Math.sin(angle_rad)
-				/ gravitational_accelleration;
-
-		// capture the values from the text fields outputting number errors where relevant
-
-		// don't forget to convert your angle input to radians for use with
-		// Math.sin()
+		time = 2 * initial_speed * Math.sin(angle_rad) / gravitation;
 
 		// display the results in the relevant TextFields
 		range_textField.setText(df.format(range));
@@ -214,6 +245,10 @@ public class Projectile extends Application {
 	// Layout
 	private GridPane gp = new GridPane();
 
+	// Planet
+	private Label planet_label = new Label("Planet");
+	private ComboBox<String> planet_combobox = new ComboBox<String>();
+
 	// Projectile Type
 	private Label projectile_type_label = new Label("Projectile Type");
 	private ComboBox<String> projectile_type_combobox = new ComboBox<String>();
@@ -227,7 +262,6 @@ public class Projectile extends Application {
 	// Angle
 	private Label angle_label = new Label("Angle [°]");
 	private Slider angle_slider = new Slider();
-
 	private TextField angle_textField = new TextField();
 	private double angle = 0;
 	// Formating the values in the duration box
@@ -242,6 +276,7 @@ public class Projectile extends Application {
 	private TextField intitial_speed_textField = new TextField();
 	private double initial_speed;
 
+	private Label results_label = new Label("Results:");
 	// Range
 	private Label range_label = new Label("Range [m]");
 	private TextField range_textField = new TextField();

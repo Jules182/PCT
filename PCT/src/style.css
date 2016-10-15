@@ -1,10 +1,15 @@
-/* CSS styles to improve layout
- * 
- 
- */ 
-/* #fire {-fx-background-color: crimson;} */
-#massl {-fx-text-fill: rgb(255, 0, 0);
-	-fx-padding: 5px;
-    -fx-border-insets: 5px;
-    -fx-background-insets: 5px;
-} 
+/* CSS styles to improve layout */ 
+
+.disabledField  {
+	-fx-control-inner-background: #DDDDDD;
+}
+#results_label {
+	-fx-font-weight:bold;
+}
+#fire_button {
+	-fx-background-color: Tomato;
+	-fx-background-radius: 5;
+}
+#mass_exception_label {
+	-fx-text-fill: #FF0000;
+}
