@@ -1,15 +1,23 @@
-/* CSS styles to improve layout */ 
+/* CSS styles to improve the layout and UX */ 
 
-.disabledField  {
+.disabled_field  {
 	-fx-control-inner-background: #DDDDDD;
 }
+
 #results_label {
 	-fx-font-weight:bold;
 }
-#fire_button {
-	-fx-background-color: Tomato;
-	-fx-background-radius: 5;
-}
+
 #mass_exception_label {
 	-fx-text-fill: #FF0000;
+}
+
+#fire_button {
+    -fx-text-fill:white;
+    
+    -fx-background-radius: 8;
+    -fx-background-color: Tomato;
+    
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
 }

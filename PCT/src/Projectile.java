@@ -80,15 +80,15 @@ public class Projectile extends Application {
 
 		// Prevent the following TextFields from being editable: angle,initial speed, range, height, time
 		angle_textField.setEditable(false);
-		angle_textField.getStyleClass().add("disabledField");
+		angle_textField.getStyleClass().add("disabled_field");
 		intitial_speed_textField.setEditable(false);
-		intitial_speed_textField.getStyleClass().add("disabledField");
+		intitial_speed_textField.getStyleClass().add("disabled_field");
 		range_textField.setEditable(false);
-		range_textField.getStyleClass().add("disabledField");
+		range_textField.getStyleClass().add("disabled_field");
 		height_textField.setEditable(false);
-		height_textField.getStyleClass().add("disabledField");
+		height_textField.getStyleClass().add("disabled_field");
 		time_textField.setEditable(false);
-		time_textField.getStyleClass().add("disabledField");
+		time_textField.getStyleClass().add("disabled_field");
 
 		// Method call to initialise the controls based on the projectile type
 		initalizeControlValues();
@@ -298,7 +298,7 @@ public class Projectile extends Application {
 	private static final double gravitational_accelleration_moon = 1.622; // m/s/s
 
 	// Calculate
-	private Button fire_button = new Button("Fire!");
+	private Button fire_button = new Button("FIRE!");
 	private Button erase_button = new Button("Erase");
 }
 
