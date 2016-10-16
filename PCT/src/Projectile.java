@@ -333,7 +333,7 @@ public class Projectile extends Application {
 	private double time;
 
 	// Energy
-	private Label energy_label = new Label("Energy [J]");
+	private Label energy_label = new Label("Energy [kJ]");
 	private TextField energy_textField = new TextField();
 	private double energy;
 
