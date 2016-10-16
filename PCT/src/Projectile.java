@@ -24,9 +24,8 @@ import javafx.stage.Stage;
 // class definition
 public class Projectile extends Application {
 
+	// init method, setting default values
 	public void init() {
-		// init method, setting default values
-
 		// Planet
 		planet_combobox.getItems().addAll("Earth", "Moon", "Mars");
 		planet_combobox.getSelectionModel().select(0); // default select
@@ -44,34 +43,38 @@ public class Projectile extends Application {
 		initial_speed_slow.setUserData("10");
 		initial_speed_medium.setUserData("55");
 		initial_speed_fast.setUserData("100");
+
 		// put Radio Buttons in HBox
 		HBox hb = new HBox();
 		hb.setSpacing(5);
 		hb.getChildren().addAll(initial_speed_slow, initial_speed_medium, initial_speed_fast);
-		
+
 		// set up GridPane Layout
 		gp.setHgap(5); // horizontal gap in pixels
 		gp.setVgap(5); // vertical gap in pixels
 		gp.setPadding(new Insets(5, 5, 5, 5)); // margins around the whole GridPane
-		
+
 		// add Rows
 		gp.addRow(0, planet_label, planet_combobox);
 		gp.addRow(1, projectile_type_label, projectile_type_combobox);
 		gp.addRow(2, mass_label, mass_textField, mass_exception_label);
 		gp.addRow(3, angle_label, angle_slider, angle_textField);
 		gp.addRow(4, initial_speed_label, hb, intitial_speed_textField);
-		gp.addRow(5, results_label, fire_button);
-		gp.addRow(6, range_label, range_textField);
-		gp.addRow(7, height_label, height_textField);
-		gp.addRow(8, time_label, time_textField, erase_button);
+		gp.addRow(5, initial_height_label, initial_height_slider, initial_height_textField);
+		gp.addRow(6, results_label, fire_button);
+		gp.addRow(7, range_label, range_textField);
+		gp.addRow(8, height_label, height_textField);
+		gp.addRow(9, time_label, time_textField);
+		gp.addRow(10, energy_label, energy_textField, erase_button);
 
 		// set the fire button to expand to fill the available space
 		fire_button.setMaxWidth(Integer.MAX_VALUE);
 		// set label to span more than 1 column
 		GridPane.setConstraints(mass_exception_label, 2, 2, 2, 1);
-		//set width of third column controls
+		// set width of third column controls
 		angle_textField.setMaxWidth(50);
 		intitial_speed_textField.setMaxWidth(50);
+		initial_height_textField.setMaxWidth(50);
 		erase_button.setMinWidth(50);
 		// set CSS selectors
 		mass_exception_label.setId("mass_exception_label");
@@ -83,20 +86,29 @@ public class Projectile extends Application {
 		angle_textField.getStyleClass().add("disabled_field");
 		intitial_speed_textField.setEditable(false);
 		intitial_speed_textField.getStyleClass().add("disabled_field");
+		initial_height_textField.setEditable(false);
+		initial_height_textField.getStyleClass().add("disabled_field");
 		range_textField.setEditable(false);
 		range_textField.getStyleClass().add("disabled_field");
 		height_textField.setEditable(false);
 		height_textField.getStyleClass().add("disabled_field");
 		time_textField.setEditable(false);
 		time_textField.getStyleClass().add("disabled_field");
+		energy_textField.setEditable(false);
+		energy_textField.getStyleClass().add("disabled_field");
 
 		// Method call to initialise the controls based on the projectile type
 		initalizeControlValues();
 
 		// Listener for angle Slider to set angle TextTield and the angle variable
 		angle_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-			angle_textField.setText(Double.toString((double) newValue));
+			angle_textField.setText(newValue.toString());
 			fire(); // update calculation with new angle
+		});
+
+		initial_height_slider.valueProperty().addListener((observable, oldValue, newValue)-> {
+			initial_height_textField.setText(newValue.toString());
+			fire();
 		});
 
 		mass_textField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -134,7 +146,7 @@ public class Projectile extends Application {
 	public void start(Stage primaryStage) {
 		// set a title on the window, set a scene, size, and show the window
 		primaryStage.setTitle("PCT - Projectile Calculation Tool");
-		Scene sc = new Scene(gp, 350, 300);
+		Scene sc = new Scene(gp, 400, 400);
 		sc.getStylesheets().add("style.css");
 		primaryStage.setScene(sc);
 		primaryStage.show();
@@ -178,9 +190,11 @@ public class Projectile extends Application {
 			break;
 		}
 
+		// get values of input variables from text fields
 		initial_speed = Double.parseDouble(intitial_speed_textField.getText());
 		angle = Double.parseDouble(angle_textField.getText());
 		double angle_rad = Math.toRadians(angle);
+		initial_height = Double.parseDouble(initial_height_textField.getText());
 
 		// calculate the range of the projectile
 		range = initial_speed * initial_speed * Math.sin(2 * angle_rad) / gravitation;
@@ -191,10 +205,16 @@ public class Projectile extends Application {
 		// calculate the flight time of the projectile
 		time = 2 * initial_speed * Math.sin(angle_rad) / gravitation;
 
+		// calculate the energy
+		energy = (mass / 2) * (initial_speed * initial_speed) // kinetic energy
+				+ mass * gravitation * initial_height; // potential energy
+		energy = energy / 1000;
+
 		// display the results in the relevant TextFields
 		range_textField.setText(df.format(range));
 		height_textField.setText(df.format(height));
 		time_textField.setText(df.format(time));
+		energy_textField.setText(df.format(energy));
 	}
 
 	// Method to initalize the controls based on the selection of the projectile type
@@ -226,19 +246,33 @@ public class Projectile extends Application {
 			initial_speed_slow.setSelected(true);
 			intitial_speed_textField.setText((String) initial_speed_slow.getUserData());
 		}
-		// Customisation of slider
+
+		// initial height slider and initialise the height to 0
+		initial_height_slider.setMax(500);
+		initial_height_slider.setValue(0);
+		initial_height_slider.setMajorTickUnit(100);
+		// set angle TextField to slider value
+		initial_height_textField.setText(df.format(initial_height_slider.getValue()));
+
+		// Customisation of sliders
 		// display ticks etc
 		angle_slider.setShowTickMarks(true);
 		angle_slider.setShowTickLabels(true);
 		angle_slider.setBlockIncrement(5);
 
+		initial_height_slider.setShowTickMarks(true);
+		initial_height_slider.setShowTickLabels(true);
+		initial_height_slider.setBlockIncrement(5);
+
 		// clear the results fields and variables
 		range_textField.clear();
 		height_textField.clear();
 		time_textField.clear();
+		energy_textField.clear();
 		range = 0;
 		height = 0;
 		time = 0;
+		energy = 0;
 	}
 
 	// Variable Declaration
@@ -276,6 +310,12 @@ public class Projectile extends Application {
 	private TextField intitial_speed_textField = new TextField();
 	private double initial_speed;
 
+	// Initial Height
+	private Label initial_height_label = new Label("Initial Height [m]");
+	private Slider initial_height_slider = new Slider();
+	private TextField initial_height_textField = new TextField();
+	private double initial_height;
+
 	private Label results_label = new Label("Results:");
 	// Range
 	private Label range_label = new Label("Range [m]");
@@ -292,6 +332,11 @@ public class Projectile extends Application {
 	private TextField time_textField = new TextField();
 	private double time;
 
+	// Energy
+	private Label energy_label = new Label("Energy [J]");
+	private TextField energy_textField = new TextField();
+	private double energy;
+
 	// Gravity
 	private static final double gravitational_accelleration = 9.81; // m/s/s
 	private static final double gravitational_accelleration_mars = 3.711; // m/s/s
@@ -307,3 +352,4 @@ public class Projectile extends Application {
 
 // inTitial_speed_textField!! can we change this?
 // decimalformat? use for mass or for time?
+// do I have to cite where I got the formula for energy from?
