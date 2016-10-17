@@ -8,16 +8,20 @@
 	-fx-font-weight:bold;
 }
 
-#mass_exception_label {
-	-fx-text-fill: #FF0000;
+.button {
+	-fx-background-radius: 8.0;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+    -fx-text-fill:white;
 }
 
 #fire_button {
-    -fx-text-fill:white;
-    
-    -fx-background-radius: 8;
     -fx-background-color: Tomato;
-    
-    -fx-font-weight: bold;
-    -fx-font-size: 1.1em;
+}
+#erase_button {	
+    -fx-background-color: CornflowerBlue;  
+}
+
+#mass_exception_label {
+	-fx-text-fill: #FF0000;
 }

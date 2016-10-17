@@ -65,21 +65,24 @@ public class Projectile extends Application {
 		gp.addRow(7, range_label, range_textField);
 		gp.addRow(8, height_label, height_textField);
 		gp.addRow(9, time_label, time_textField);
-		gp.addRow(10, energy_label, energy_textField, erase_button);
-
-		// set the fire button to expand to fill the available space
+		gp.addRow(10, energy_label, energy_textField);
+		gp.add(erase_button, 1, 11);
+		
+		// set the fire&erase buttons to expand to fill the available space
 		fire_button.setMaxWidth(Integer.MAX_VALUE);
+		erase_button.setMaxWidth(Integer.MAX_VALUE);
 		// set label to span more than 1 column
 		GridPane.setConstraints(mass_exception_label, 2, 2, 2, 1);
 		// set width of third column controls
 		angle_textField.setMaxWidth(50);
 		intitial_speed_textField.setMaxWidth(50);
 		initial_height_textField.setMaxWidth(50);
-		erase_button.setMinWidth(50);
+		
 		// set CSS selectors
 		mass_exception_label.setId("mass_exception_label");
 		results_label.setId("results_label");
 		fire_button.setId("fire_button");
+		erase_button.setId("erase_button");
 
 		// Prevent the following TextFields from being editable: angle,initial speed, range, height, time
 		angle_textField.setEditable(false);
@@ -344,7 +347,7 @@ public class Projectile extends Application {
 
 	// Calculate
 	private Button fire_button = new Button("FIRE!");
-	private Button erase_button = new Button("Erase");
+	private Button erase_button = new Button("RESET");
 }
 
 // don't break away form the template
