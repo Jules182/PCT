@@ -3,6 +3,14 @@
  * This application allows the user to calculate range, max height and flight time for a projectile 
  * following the entering of mass (currently not used), angle of launch, and initial speed.
  * There is error checking to ensure that suitable values are entered. 
+ * 
+ * Added the following functionalities:
+ * 1. switch planet by selection of Earth, Moon or Mars. 
+ * 	This will affect the calculation of the result values due to a change in gravitational acceleration.
+ * 	Source: Google Search for "gravity moon" + "gravity mars"
+ * 2. Calculation involving mass: total mechanical energy of the system
+ *  potential energy [m*g*h] + kinetic energy [(1/2)*m*v^2]
+ *  Source: http://physics.bu.edu/~duffy/py105/EnergyConservation.html
  */
 
 import java.text.DecimalFormat;
@@ -17,6 +25,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -53,7 +62,6 @@ public class Projectile extends Application {
 		gp.setHgap(5); // horizontal gap in pixels
 		gp.setVgap(5); // vertical gap in pixels
 		gp.setPadding(new Insets(5, 5, 5, 5)); // margins around the whole GridPane
-
 		// add Rows
 		gp.addRow(0, planet_label, planet_combobox);
 		gp.addRow(1, projectile_type_label, projectile_type_combobox);
@@ -67,8 +75,8 @@ public class Projectile extends Application {
 		gp.addRow(9, time_label, time_textField);
 		gp.addRow(10, energy_label, energy_textField);
 		gp.add(erase_button, 1, 11);
-		
-		// set the fire&erase buttons to expand to fill the available space
+
+		// set the fire&erase buttons to expand to fill the whole column
 		fire_button.setMaxWidth(Integer.MAX_VALUE);
 		erase_button.setMaxWidth(Integer.MAX_VALUE);
 		// set label to span more than 1 column
@@ -77,7 +85,7 @@ public class Projectile extends Application {
 		angle_textField.setMaxWidth(50);
 		intitial_speed_textField.setMaxWidth(50);
 		initial_height_textField.setMaxWidth(50);
-		
+
 		// set CSS selectors
 		mass_exception_label.setId("mass_exception_label");
 		results_label.setId("results_label");
@@ -105,12 +113,12 @@ public class Projectile extends Application {
 
 		// Listener for angle Slider to set angle TextTield and the angle variable
 		angle_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-			angle_textField.setText(newValue.toString());
+			angle_textField.setText(df.format(newValue));
 			fire(); // update calculation with new angle
 		});
 
-		initial_height_slider.valueProperty().addListener((observable, oldValue, newValue)-> {
-			initial_height_textField.setText(newValue.toString());
+		initial_height_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			initial_height_textField.setText(df.format(newValue));
 			fire();
 		});
 
@@ -149,8 +157,10 @@ public class Projectile extends Application {
 	public void start(Stage primaryStage) {
 		// set a title on the window, set a scene, size, and show the window
 		primaryStage.setTitle("PCT - Projectile Calculation Tool");
+		primaryStage.getIcons().add(new Image(Projectile.class.getResourceAsStream("rocket-icon.png")));
+		// Source: http://www.iconarchive.com/show/captiva-icons-by-bokehlicia/rocket-icon.html
 		Scene sc = new Scene(gp, 400, 400);
-		sc.getStylesheets().add("style.css");
+		sc.getStylesheets().add("style.css"); // add CSS Stylesheet
 		primaryStage.setScene(sc);
 		primaryStage.show();
 	}
@@ -196,7 +206,7 @@ public class Projectile extends Application {
 		// get values of input variables from text fields
 		initial_speed = Double.parseDouble(intitial_speed_textField.getText());
 		angle = Double.parseDouble(angle_textField.getText());
-		double angle_rad = Math.toRadians(angle);
+		double angle_rad = Math.toRadians(angle); // convert to radiant value
 		initial_height = Double.parseDouble(initial_height_textField.getText());
 
 		// calculate the range of the projectile
@@ -235,7 +245,6 @@ public class Projectile extends Application {
 			// initialise the initial speed to fast
 			initial_speed_fast.setSelected(true);
 			intitial_speed_textField.setText((String) initial_speed_fast.getUserData());
-
 		} else {
 			// initialise the mass to 400kg
 			mass_textField.setText("400");
@@ -342,17 +351,10 @@ public class Projectile extends Application {
 
 	// Gravity
 	private static final double gravitational_accelleration = 9.81; // m/s/s
-	private static final double gravitational_accelleration_mars = 3.711; // m/s/s
 	private static final double gravitational_accelleration_moon = 1.622; // m/s/s
+	private static final double gravitational_accelleration_mars = 3.711; // m/s/s
 
 	// Calculate
 	private Button fire_button = new Button("FIRE!");
 	private Button erase_button = new Button("RESET");
 }
-
-// don't break away form the template
-// change slider according to value
-
-// inTitial_speed_textField!! can we change this?
-// decimalformat? use for mass or for time?
-// do I have to cite where I got the formula for energy from?
